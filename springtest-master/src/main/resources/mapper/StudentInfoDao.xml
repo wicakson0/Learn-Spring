@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.example.mybatis.dao.StudentInfoDao">
+    <resultMap id="studentInfoMap" type="org.example.mybatis.entity.StudentInfo">
+        <id column="stu_id" property="stuId"></id>
+        <id column="stu_name" property="stuName"></id>
+        <id column="sex" property="sex"></id>
+        <id column="birthdate" property="birthdate"></id>
+    </resultMap>
+    <select id="findStudentById" parameterType="long" resultMap="studentInfoMap">
+        SELECT * FROM student_info WHERE stu_id = #{id}
+    </select>
+</mapper>

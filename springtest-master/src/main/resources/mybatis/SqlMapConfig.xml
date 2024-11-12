@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+    <!-- settings -->
+    <settings>
+        <!-- Turn on lazy loading -->
+        <setting name="lazyLoadingEnabled" value="true"/>
+        <!-- Change active loading to passive loading (i.e. on-demand loading) 将积极加载改为消极加载（即按需加载） -->
+        <setting name="aggressiveLazyLoading" value="false"/>
+        <!-- Turn on the global cache switch (second-level cache). The default value is true. 打开全局缓存开关（二级缓存）默认值就是 true -->
+        <setting name="cacheEnabled" value="true"/>
+        <!-- print MYSQL statement -->
+        <setting name="logImpl" value="STDOUT_LOGGING" />
+    </settings>
+
+    <!-- Alias definition -->
+    <typeAliases>
+        <package name="org.example.mybatis.entity"/>
+    </typeAliases>
+
+    <!-- Load mapping file -->
+    <mappers>
+        <!-- Load one mapping file at a time through the resource method   通过 resource 方法一次加载一个映射文件 -->
+        <mapper resource="mapper/StudentInfoDao.xml"/>
+        <!-- Load mappers in batches   批量加载mapper -->
+        <package name="mapper"/>
+    </mappers>
+</configuration>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+           http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.springframework.org/schema/aop
+           http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+           http://www.springframework.org/schema/tx
+           http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+    <context:component-scan base-package="org.example.spring.entity" />
+    <context:component-scan base-package="org.example.mybatis.entity" />
+    <context:component-scan base-package="org.example.mybatis.dao" />
+    <aop:aspectj-autoproxy/>
+
+    <bean name="source" class="org.example.spring.entity.Source">
+        <property name="fruit" value="Apple"/>
+        <property name="sugar" value="polysaccharide"/>
+        <property name="size" value="Large Cup"/>
+    </bean>
+
+    <bean name="juickMaker" class="org.example.spring.service.JuiceMaker">
+        <property name="source" ref="source"/>
+    </bean>
+
+    <bean name="productService" class="org.example.spring.service.ProductService"/>
+    <bean id="loggerAspect" class="org.example.spring.aspect.LoggerAspect"/>
+    <!-- config AOP -->
+    <aop:config>
+        <!-- where: package class method -->
+        <aop:pointcut id="loggerCutPoint"
+                      expression="execution(* org.example.spring.service.ProductService.*(..))"/>
+
+        <!-- what -->
+        <aop:aspect id="logAspect" ref="loggerAspect">
+            <!-- when: Method before/after/before and after -->
+            <aop:around pointcut-ref="loggerCutPoint" method="log"/>
+        </aop:aspect>
+    </aop:config>
+
+
+    <!-- Load configuration file -->
+    <!-- 使用 PropertyPlaceholderConfigurer 加载 log4j.properties 文件 -->
+    <context:property-placeholder location="classpath:db.properties"/>
+    <!-- Config datasource -->
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="${jdbc.driver}"/>
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+    </bean>
+
+    <!-- sqlSessionFactory -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!-- Load the configuration file of MyBatis -->
+        <property name="configLocation" value="mybatis/SqlMapConfig.xml"/>
+        <!-- datasource -->
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <bean id="studentInfoDao" class="org.example.mybatis.dao.impl.StudentInfoDaoImpl">
+        <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+    </bean>
+</beans>
